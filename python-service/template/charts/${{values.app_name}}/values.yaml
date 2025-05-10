@@ -1,0 +1,58 @@
+replicaCount: 1
+image:
+  repository: doclosjs/${{values.app_name}}
+  pullPolicy: IfNotPresent
+  tag: ${{values.app_name}}-${{values.app_env}}-latest
+imagePullSecrets:
+  - name: regcred
+nameOverride: ""
+fullnameOverride: ""
+serviceAccount:
+  create: false
+  automount: true
+  annotations: {}
+  name: ""
+podAnnotations: {}
+podLabels: {}
+podSecurityContext: {}
+securityContext: {}
+service:
+  type: ClusterIP
+  port: 5000
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  hosts:
+    - host: ${{values.app_name}}-${{values.app_env}}.app
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - python-service.app
+      secretName: python-service-tls
+resources:
+  requests:
+    cpu: 30m
+    memory: 30M
+livenessProbe:
+  httpGet:
+    path: /api/v1/health
+    port: http
+readinessProbe:
+  httpGet:
+    path: /api/v1/health
+    port: http
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+volumes: []
+volumeMounts: []
+nodeSelector: {}
+tolerations: []
+affinity: {}

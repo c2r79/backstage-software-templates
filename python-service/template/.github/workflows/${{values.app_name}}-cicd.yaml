@@ -1,0 +1,76 @@
+name: ${{values.app_name}}-cicd 
+
+on:
+  push:
+    paths:
+      - src/**
+    branches:
+      - main
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Shorten commit SHA
+        shell: bash
+        run: |
+          echo "COMMIT_ID=${GITHUB_SHA::6}" >> "$GITHUB_ENV"
+      -
+        name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ '${{ vars.DOCKERHUB_USERNAME }}' }}
+          password: ${{ '${{ secrets.DOCKERHUB_TOKEN }}' }}
+      -
+        name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: doclosjs/${{values.app_name}}:${{ '${{env.COMMIT_ID}}' }}
+    outputs:
+      commit_id: ${{ '${{env.COMMIT_ID}}' }}
+
+  cd:
+    needs: ci
+    runs-on: arc-runner-set
+    steps:
+      -
+        name: Clone the repo
+        uses: actions/checkout@v3
+      -
+        name: Install Python and pip
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3 python3-pip python3-venv
+      - 
+        name: Modify values file
+        shell: bash
+        run: |
+          python3 -m pip install --user pipx
+          export PATH="$HOME/.local/bin:$PATH"
+          pipx install yq
+          yq -Yi '.image.tag = "${{needs.ci.outputs.commit_id}}"' charts/${{values.app_name}}/values-${{values.app_env}}.yaml
+      -
+        name: Commit changes and push
+        uses: EndBug/add-and-commit@v9
+        with:
+          message: 'Upates values.yaml file with commit: ${{needs.ci.outputs.commit_id}}'
+      -
+        name: Download & install argocd CLI
+        shell: bash
+        run: |
+          curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+          chmod +x argocd-linux-amd64
+          sudo mv argocd-linux-amd64 /usr/local/bin/argocd
+      -
+        name: Run Argocd app sync
+        shell: bash
+        run: |
+          argocd login argocd-server.argocd.svc.cluster.local \
+            --grpc-web \
+            --insecure \
+            --username admin \
+            --password ${{ '${{ secrets.ARGOCD_PASSWORD }}' }}
+          argocd app sync ${{values.app_name}}

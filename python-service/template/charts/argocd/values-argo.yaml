@@ -1,0 +1,31 @@
+redis-ha:
+  enabled: false
+
+controller:
+  replicas: 1
+
+repoServer:
+  replicas: 1
+  imagePullSecrets:
+    - name: regcred
+
+applicationSet:
+  replicas: 1
+
+global:
+  domain: argocd.los.com
+
+certificate:
+  enabled: true
+
+server:
+  replicas: 1
+  imagePullSecrets:
+    - name: regcred
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    annotations:
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    tls: true

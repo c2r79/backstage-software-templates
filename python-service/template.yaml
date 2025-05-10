@@ -12,6 +12,7 @@ spec:
     - title: Fill in some steps
       required:
         - component_id
+        - description
         - environment
       properties:
         component_id:
@@ -19,6 +20,10 @@ spec:
           type: string
           description: Provide a component (microservice) name
           pattern: '^([a-zA-Z][a-zA-Z0-9]*)(-[a-zA-Z0-9]+)*$'
+        description:
+          title: Component description
+          type: string
+          description: Provide a component description
         environment:
           title: Environment
           type: string
@@ -30,16 +35,17 @@ spec:
 
   steps:
     - id: fetch-base
-      name: Fetch Base
+      name: Fetch template base to use
       action: fetch:template
       input:
         url: ./template
         values:
           app_name: ${{parameters.component_id}}
           app_env: ${{parameters.environment}}
+          app_desc: ${{parameters.description}}
 
     - id: publish
-      name: Publish
+      name: Create new Github repo
       action: publish:github
       input:
         allowedHosts:
@@ -48,9 +54,10 @@ spec:
         repoUrl: github.com?owner=c2r79&repo=${{parameters.component_id}}
         protectDefaultBranch: false
         repoVisibility: public
+        defaultBranch: main
 
     - id: register
-      name: Register
+      name: Register new repo with Backstage
       action: catalog:register
       input:
         repoContentsUrl: ${{ steps['publish'].output.repoContentsUrl }}

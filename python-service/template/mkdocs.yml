@@ -1,0 +1,11 @@
+site_name:  '${{values.app_name}}'
+site_description: '${{values.app_desc}}'
+repo_url: https://github.com/c2r79/${{values.app_name}}
+edit_uri: edit/main/docs
+
+plugins:
+  - techdocs-core
+
+nav:
+  - Introduction:
+    - Getting started: 'index.md'
