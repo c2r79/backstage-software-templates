@@ -1,34 +1,34 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
-metadata: 
-  name: python-service-template
+metadata:
+  name: python-template
   title: Python flask template
   description: Provisions a minimalistic flask application
 spec:
   owner: development
   type: service
 
-parameters:
-  - title: Fill in component form
-    required:
-      - component_id
-      - environment
-    properties:
-      component_id:
-        title: Component name
-        type: string
-        description: Provide a component (microservice) name
-        pattern: '^([a-zA-Z][a-zA-Z0-9]*)(-[a-zA-Z0-9]+)*$'
-      envronment:
-        title: Environment
-        type: string
-        dscription: The environment to deploy the component to
-        enum:
-          - dev
-          - stage
-          - prod
+  parameters:
+    - title: Fill in some steps
+      required:
+        - component_id
+        - environment
+      properties:
+        component_id:
+          title: Component name
+          type: string
+          description: Provide a component (microservice) name
+          pattern: '^([a-zA-Z][a-zA-Z0-9]*)(-[a-zA-Z0-9]+)*$'
+        environment:
+          title: Environment
+          type: string
+          description: The environment where this component will be deployed
+          enum:
+            - dev
+            - stage
+            - prod
 
-steps:
+  steps:
     - id: fetch-base
       name: Fetch Base
       action: fetch:template
@@ -45,7 +45,7 @@ steps:
         allowedHosts:
           - github.com
         description: This is ${{ parameters.component_id }}
-        repoUrl: github.com?owner=ricardoandre-97&repo=${{parameters.component_id}}
+        repoUrl: github.com?owner=c2r79&repo=${{parameters.component_id}}
         protectDefaultBranch: false
         repoVisibility: public
 
@@ -56,7 +56,7 @@ steps:
         repoContentsUrl: ${{ steps['publish'].output.repoContentsUrl }}
         catalogInfoPath: "/catalog-info.yaml"
 
-output:
-  links:
-    - title: Repository
-      url: ${{ steps['publish'].output.remoteUrl }}     
+  output:
+    links:
+      - title: Repository
+        url: ${{ steps['publish'].output.remoteUrl }}
