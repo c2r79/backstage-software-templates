@@ -44,14 +44,14 @@ spec:
           app_env: ${{parameters.environment}}
           app_desc: ${{parameters.description}}
 
-    - id: publish
+    - id: github publish
       name: Create new Github repo
       action: publish:github
       input:
         allowedHosts:
           - github.com
         description: This is ${{ parameters.component_id }}
-        repoUrl: github.com?owner=c2r79&repo=${{parameters.component_id}}
+        repoUrl: github.com?owner=los-demos&repo=${{parameters.component_id}}
         protectDefaultBranch: false
         repoVisibility: public
         defaultBranch: main
