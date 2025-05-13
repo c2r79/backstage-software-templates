@@ -1,4 +1,4 @@
-## Documents for Python service
+## Documents for ${{values.app_name}}
 
 This application has 2 endpoints:
 - `/api/v1/details`
