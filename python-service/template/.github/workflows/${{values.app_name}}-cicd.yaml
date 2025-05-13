@@ -51,12 +51,12 @@ jobs:
           python3 -m pip install --user pipx
           export PATH="$HOME/.local/bin:$PATH"
           pipx install yq
-          yq -Yi '.image.tag = "${{needs.ci.outputs.commit_id}}"' charts/${{values.app_name}}/values-${{values.app_env}}.yaml
+          yq -Yi '.image.tag = "${{'${{needs.ci.outputs.commit_id}}' }}"' charts/${{values.app_name}}/values-${{values.app_env}}.yaml
       -
         name: Commit changes and push
         uses: EndBug/add-and-commit@v9
         with:
-          message: 'Upates values.yaml file with commit: ${{needs.ci.outputs.commit_id}}'
+          message: 'Upates values.yaml file with commit: ${{ '${{needs.ci.outputs.commit_id}}' }}'
       -
         name: Download & install argocd CLI
         shell: bash
