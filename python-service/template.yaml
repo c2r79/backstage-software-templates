@@ -44,7 +44,7 @@ spec:
           app_env: ${{parameters.environment}}
           app_desc: ${{parameters.description}}
 
-    - id: github publish
+    - id: publish
       name: Create new Github repo
       action: publish:github
       input:
