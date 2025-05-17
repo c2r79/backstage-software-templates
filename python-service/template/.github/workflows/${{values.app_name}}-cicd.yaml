@@ -30,9 +30,8 @@ jobs:
           tags: doclosjs/${{values.app_name}}:${{ '${{env.COMMIT_ID}}' }}
       -
         name: Register with releases
-        action: shell:script
-        input:
-          script: ./post-create.sh
+        shell: bash
+        run: ./post-create.sh
   #   outputs:
   #     commit_id: ${{ '${{env.COMMIT_ID}}' }}
 
