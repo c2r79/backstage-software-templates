@@ -65,13 +65,22 @@ jobs:
           chmod +x argocd-linux-amd64
           sudo mv argocd-linux-amd64 /usr/local/bin/argocd
       -
+        name: Argocd login
+        shell: bash
+        run: |
+          argocd login argocd.los.com \
+            --insecure  \
+            --grpc-web \
+            --username admin \
+            --password  ${{ '${{ secrets.ARGOCD_PASSWORD }}' }}
+      -
         name: Add Argocd repo and create app
         shell: bash
         run: |
           repo="https://github.com/los-demo/${{values.app_name}}.git"
           argocd repo list | grep -q $repo || argocd repo add $repo
           
-          argocd app get ${{values.app_name}} || argocd app create ${{values.app_name}}
+          argocd app get ${{values.app_name}} || argocd app create ${{values.app_name}} \
             --repo $repo \
             --path charts/${{values.app_name}} \
             --dest-namespace ${{values.app_env}} \
@@ -84,10 +93,5 @@ jobs:
         name: Run Argocd app sync
         shell: bash
         run: |
-          argocd login argocd-server.argocd.svc.cluster.local \
-            --grpc-web \
-            --insecure \
-            --username admin \
-            --password ${{ '${{ secrets.ARGOCD_PASSWORD }}' }}
           argocd app sync ${{values.app_name}}
           argocd app wait ${{values.app_name}} --timeout 180
