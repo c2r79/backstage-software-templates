@@ -28,70 +28,75 @@ jobs:
         with:
           push: true
           tags: doclosjs/${{values.app_name}}:${{ '${{env.COMMIT_ID}}' }}
-    outputs:
-      commit_id: ${{ '${{env.COMMIT_ID}}' }}
+      -
+        name: Register with releases
+        action: shell:script
+        input:
+          script: ./post-create.sh
+  #   outputs:
+  #     commit_id: ${{ '${{env.COMMIT_ID}}' }}
 
-  cd:
-    needs: ci
-    runs-on: [arc-runner-set]
-    steps:
-      -
-        name: Clone the repo
-        uses: actions/checkout@v3
-      -
-        name: Install Python and pip
-        shell: bash
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y python3 python3-pip python3-venv
-      - 
-        name: Modify values file
-        shell: bash
-        run: |
-          python3 -m pip install --user pipx
-          export PATH="$HOME/.local/bin:$PATH"
-          pipx install yq
-          yq -Yi '.image.tag = "${{'${{needs.ci.outputs.commit_id}}' }}"' charts/${{values.app_name}}/values-${{values.app_env}}.yaml
-      -
-        name: Commit changes and push
-        uses: EndBug/add-and-commit@v9
-        with:
-          message: 'Upates values.yaml file with commit: ${{ '${{needs.ci.outputs.commit_id}}' }}'
-      -
-        name: Download & install argocd CLI
-        shell: bash
-        run: |
-          curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
-          chmod +x argocd-linux-amd64
-          sudo mv argocd-linux-amd64 /usr/local/bin/argocd
-      -
-        name: Argocd login
-        shell: bash
-        run: |
-          argocd login argocd.los.com \
-            --insecure  \
-            --grpc-web \
-            --username admin \
-            --password  ${{ '${{ secrets.ARGOCD_PASSWORD }}' }}
-      -
-        name: Add Argocd repo and create app
-        shell: bash
-        run: |
-          repo="https://github.com/los-demo/${{values.app_name}}.git"
-          argocd repo list | grep -q $repo || argocd repo add $repo
+  # cd:
+  #   needs: ci
+  #   runs-on: [arc-runner-set]
+  #   steps:
+  #     -
+  #       name: Clone the repo
+  #       uses: actions/checkout@v3
+  #     -
+  #       name: Install Python and pip
+  #       shell: bash
+  #       run: |
+  #         sudo apt-get update
+  #         sudo apt-get install -y python3 python3-pip python3-venv
+  #     - 
+  #       name: Modify values file
+  #       shell: bash
+  #       run: |
+  #         python3 -m pip install --user pipx
+  #         export PATH="$HOME/.local/bin:$PATH"
+  #         pipx install yq
+  #         yq -Yi '.image.tag = "${{'${{needs.ci.outputs.commit_id}}' }}"' charts/${{values.app_name}}/values-${{values.app_env}}.yaml
+  #     -
+  #       name: Commit changes and push
+  #       uses: EndBug/add-and-commit@v9
+  #       with:
+  #         message: 'Upates values.yaml file with commit: ${{ '${{needs.ci.outputs.commit_id}}' }}'
+  #     -
+  #       name: Download & install argocd CLI
+  #       shell: bash
+  #       run: |
+  #         curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+  #         chmod +x argocd-linux-amd64
+  #         sudo mv argocd-linux-amd64 /usr/local/bin/argocd
+  #     -
+  #       name: Argocd login
+  #       shell: bash
+  #       run: |
+  #         argocd login argocd.los.com \
+  #           --insecure  \
+  #           --grpc-web \
+  #           --username admin \
+  #           --password  ${{ '${{ secrets.ARGOCD_PASSWORD }}' }}
+  #     -
+  #       name: Add Argocd repo and create app
+  #       shell: bash
+  #       run: |
+  #         repo="https://github.com/los-demo/${{values.app_name}}.git"
+  #         argocd repo list | grep -q $repo || argocd repo add $repo
           
-          argocd app get ${{values.app_name}} || argocd app create ${{values.app_name}} \
-            --repo $repo \
-            --path charts/${{values.app_name}} \
-            --dest-namespace ${{values.app_env}} \
-            --dest-server https://kubernetes.default.svc \
-            --values values-${{values.app_env}}.yaml \
-            --revision main \
-            --sync-policy manual \
-            --sync-option CreateNamespace=true
-      -
-        name: Run Argocd app sync
-        shell: bash
-        run: |
-          argocd app sync ${{values.app_name}}
-          argocd app wait ${{values.app_name}} --timeout 180
+  #         argocd app get ${{values.app_name}} || argocd app create ${{values.app_name}} \
+  #           --repo $repo \
+  #           --path charts/${{values.app_name}} \
+  #           --dest-namespace ${{values.app_env}} \
+  #           --dest-server https://kubernetes.default.svc \
+  #           --values values-${{values.app_env}}.yaml \
+  #           --revision main \
+  #           --sync-policy manual \
+  #           --sync-option CreateNamespace=true
+  #     -
+  #       name: Run Argocd app sync
+  #       shell: bash
+  #       run: |
+  #         argocd app sync ${{values.app_name}}
+  #         argocd app wait ${{values.app_name}} --timeout 180
