@@ -1,8 +1,6 @@
 #!/bin/bash
 set -e
 
-REPO_NAME="dcipher-demo-releases"
-RELEASE_REPO="https://github.com/los-demos/$REPO_NAME.git"
 APP_NAME="${{ values.app_name }}"
 ENV="${{ values.app_env }}"
 
