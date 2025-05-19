@@ -32,6 +32,14 @@ jobs:
           push: true
           tags: doclosjs/${{values.app_name}}:${{ '${{env.COMMIT_ID}}' }}
       -
+        name: Set up SSH deploy key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.RELEASE_DEPLOY_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      -
         name: Register with releases
         shell: bash
         run: ./post-create.sh
