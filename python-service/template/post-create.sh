@@ -1,4 +1,4 @@
-RELEASE_REPO="git@github.com:los-demos/dcipher-demo-releases.git"
+RELEASE_REPO="https://github.com/los-demos/dcipher-demo-releases.git"
 APP_NAME="${{ values.app_name }}"
 ENV="${{ values.app_env }}"
 
