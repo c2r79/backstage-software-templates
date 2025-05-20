@@ -37,7 +37,6 @@ jobs:
         with:
           push: true
           tags: doclosjs/${{values.app_name}}:${{ '${{env.COMMIT_ID}}' }}
-      -
       - name: Check token exists
         run: |
           if [ -z "$GITHUB_TOKEN" ]; then
