@@ -15,7 +15,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       COMMIT_ID: ${{ github.sha }}
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       -
@@ -43,6 +42,8 @@ jobs:
         shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          APP_NAME: ${{ values.app_name }}
+          APP_ENV: ${{ values.app_env }}
         run: |
           export RELEASE_REPO="https://x-access-token:${GITHUB_TOKEN}@github.com/los-demos/dcipher-demo-releases.git" 
           ./post-create.sh
