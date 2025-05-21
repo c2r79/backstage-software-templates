@@ -37,18 +37,18 @@ jobs:
         with:
           push: true
           tags: doclosjs/${{values.app_name}}:${{ '${{env.COMMIT_ID}}' }}
-      # -
-      #   name: Debug GitHub token presence
-      #   shell: bash
-      #   run: |
-      #     if [ -z "$GITHUB_TOKEN" ]; then
-      #       echo "GITHUB_TOKEN is empty"
-      #       exit 1
-      #     else
-      #       echo "GITHUB_TOKEN is set"
-      #     fi
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+      -
+        name: Debug GitHub token presence
+        shell: bash
+        run: |
+          if [ -z "$GITHUB_TOKEN" ]; then
+            echo "GITHUB_TOKEN is empty"
+            exit 1
+          else
+            echo "GITHUB_TOKEN is set"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
       -
         name: Register with releases
         shell: bash
