@@ -37,24 +37,24 @@ jobs:
           push: true
           tags: doclosjs/${{values.app_name}}:${{ '${{env.COMMIT_ID}}' }}
   cd:
-  needs: ci
-  runs-on: ubuntu-latest
-  env:
-    RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-  steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+    needs: ci
+    runs-on: ubuntu-latest
+    env:
+      RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Set environment variables
-      run: |
-        echo "APP_NAME=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
-        echo "APP_ENV=${{values.app_env}}" >> $GITHUB_ENV  # or infer from branch or input
+      - name: Set environment variables
+        run: |
+          echo "APP_NAME=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
+          echo "APP_ENV=${{values.app_env}}" >> $GITHUB_ENV  # or infer from branch or input
 
-    - name: Register with releases repo
-      shell: bash
-      run: |
-        export RELEASE_REPO="https://x-access-token:${RELEASE_TOKEN}@github.com/los-demos/dcipher-demo-releases.git" 
-        ./post-create.sh
+      - name: Register with releases repo
+        shell: bash
+        run: |
+          export RELEASE_REPO="https://x-access-token:${RELEASE_TOKEN}@github.com/los-demos/dcipher-demo-releases.git" 
+          ./post-create.sh
 
   # cd:
   #   needs: ci
