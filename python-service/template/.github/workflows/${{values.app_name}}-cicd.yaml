@@ -37,17 +37,17 @@ jobs:
           push: true
           tags: doclosjs/${{values.app_name}}:${{ '${{env.COMMIT_ID}}' }}
   cd:
-  	runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
     env:
-      RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+      RELEASE_TOKEN: ${{secrets.RELEASE_TOKEN }}
     steps:
-      -
-        name: Register with releases
-        if: ${{ secrets.RELEASE_TOKEN != '' }}
+      - 
+        name: Register with releases repo
         shell: bash
         run: |
           export RELEASE_REPO="https://x-access-token:${RELEASE_TOKEN}@github.com/los-demos/dcipher-demo-releases.git" 
           ./post-create.sh
+
       # - 
       #   name: Run release script
       #   env:
