@@ -46,7 +46,7 @@ jobs:
       - name: Register with releases repo
         shell: bash
         env:
-          RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          RELEASE_TOKEN: ${{ '${{ secrets.RELEASE_TOKEN }}' }}
         run: |
           export APP_NAME="${GITHUB_REPOSITORY##*/}"
           export APP_ENV="${{ values.app_env }}"
