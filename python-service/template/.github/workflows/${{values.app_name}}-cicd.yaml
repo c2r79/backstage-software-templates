@@ -39,14 +39,14 @@ jobs:
   cd:
     needs: ci
     runs-on: ubuntu-latest
-    env:
-      RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Register with releases repo
         shell: bash
+        env:
+          RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
         run: |
           export APP_NAME="${GITHUB_REPOSITORY##*/}"
           export APP_ENV="${{ values.app_env }}"
