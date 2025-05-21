@@ -1,4 +1,4 @@
-name: ${{values.app_name}}-cicd 
+name: {{ values.app_name }}-cicd
 
 on:
   push:
@@ -16,40 +16,38 @@ jobs:
     env:
       COMMIT_ID: ${{ github.sha }}
     steps:
-      -
-        name: Checkout repository
+      - name: Checkout repository
         uses: actions/checkout@v3
-      -
-        name: Shorten commit SHA
+
+      - name: Shorten commit SHA
         shell: bash
         run: |
           echo "COMMIT_ID=${GITHUB_SHA::6}" >> "$GITHUB_ENV"
-      -
-        name: Login to Docker Hub
+
+      - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ '${{ vars.DOCKERHUB_USERNAME }}' }}
-          password: ${{ '${{ secrets.DOCKERHUB_TOKEN }}' }}
-      -
-        name: Build and push Docker image
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: doclosjs/${{values.app_name}}:${{ '${{env.COMMIT_ID}}' }}
+          tags: doclosjs/{{ values.app_name }}:${{ env.COMMIT_ID }}
+
   cd:
     needs: ci
     runs-on: ubuntu-latest
     env:
       RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
     steps:
-      - 
-        name: Checkout repository
+      - name: Checkout repository
         uses: actions/checkout@v3
-      -
-        name: Debug Release token presence
+
+      - name: Debug Release token presence
         shell: bash
         run: |
-          echo "Debugging environment..."
           echo "APP_NAME=${GITHUB_REPOSITORY##*/}"
           echo "RELEASE_TOKEN is ${#RELEASE_TOKEN} characters long"
           if [ -z "$RELEASE_TOKEN" ]; then
@@ -58,15 +56,12 @@ jobs:
           else
             echo "RELEASE_TOKEN is set"
           fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-      -
-        name: Register with releases repo
+
+      - name: Register with releases repo
         shell: bash
         run: |
           export APP_NAME="${GITHUB_REPOSITORY##*/}"
-          export APP_ENV="${{values.app_name}}"  # or derive dynamically if needed
-          export RELEASE_TOKEN="${{ secrets.RELEASE_TOKEN }}"
+          export APP_ENV="{{ values.app_env }}"
           export RELEASE_REPO="https://x-access-token:${RELEASE_TOKEN}@github.com/los-demos/dcipher-demo-releases.git"
 
           echo "APP_NAME=$APP_NAME"
@@ -74,6 +69,84 @@ jobs:
           echo "RELEASE_REPO=$RELEASE_REPO"
 
           ./post-create.sh
+
+# name: ${{values.app_name}}-cicd 
+
+# on:
+#   push:
+#     paths:
+#       - src/**
+#     branches:
+#       - main
+
+# permissions:
+#   contents: write
+
+# jobs:
+#   ci:
+#     runs-on: ubuntu-latest
+#     env:
+#       COMMIT_ID: ${{ github.sha }}
+#     steps:
+#       -
+#         name: Checkout repository
+#         uses: actions/checkout@v3
+#       -
+#         name: Shorten commit SHA
+#         shell: bash
+#         run: |
+#           echo "COMMIT_ID=${GITHUB_SHA::6}" >> "$GITHUB_ENV"
+#       -
+#         name: Login to Docker Hub
+#         uses: docker/login-action@v3
+#         with:
+#           username: ${{ '${{ vars.DOCKERHUB_USERNAME }}' }}
+#           password: ${{ '${{ secrets.DOCKERHUB_TOKEN }}' }}
+#       -
+#         name: Build and push Docker image
+#         uses: docker/build-push-action@v6
+#         with:
+#           push: true
+#           tags: doclosjs/${{values.app_name}}:${{ '${{env.COMMIT_ID}}' }}
+#   cd:
+#     needs: ci
+#     runs-on: ubuntu-latest
+#     env:
+#       RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+#     steps:
+#       - 
+#         name: Checkout repository
+#         uses: actions/checkout@v3
+#       -
+#         name: Debug Release token presence
+#         shell: bash
+#         run: |
+#           echo "Debugging environment..."
+#           echo "APP_NAME=${GITHUB_REPOSITORY##*/}"
+#           echo "RELEASE_TOKEN is ${#RELEASE_TOKEN} characters long"
+#           if [ -z "$RELEASE_TOKEN" ]; then
+#             echo "RELEASE_TOKEN is empty"
+#             exit 1
+#           else
+#             echo "RELEASE_TOKEN is set"
+#           fi
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+#       -
+#         name: Register with releases repo
+#         shell: bash
+#         run: |
+#           export APP_NAME="${GITHUB_REPOSITORY##*/}"
+#           export APP_ENV="${{values.app_name}}"  # or derive dynamically if needed
+#           export RELEASE_TOKEN="${{ secrets.RELEASE_TOKEN }}"
+#           export RELEASE_REPO="https://x-access-token:${RELEASE_TOKEN}@github.com/los-demos/dcipher-demo-releases.git"
+
+#           echo "APP_NAME=$APP_NAME"
+#           echo "APP_ENV=$APP_ENV"
+#           echo "RELEASE_REPO=$RELEASE_REPO"
+
+#           ./post-create.sh
+#####################################################
 
       # - name: Set environment variables
       #   run: |
