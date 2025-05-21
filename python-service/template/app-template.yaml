@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/los-demo/${APP_NAME}.git
+    repoURL: https://github.com/los-demos/${APP_NAME}.git
     targetRevision: main
     path: charts/${APP_NAME}
   destination:
