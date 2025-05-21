@@ -46,6 +46,19 @@ jobs:
         name: Checkout repository
         uses: actions/checkout@v3
       -
+        name: Debug environment variables
+        shell: bash
+        run: |
+          echo "Debugging environment..."
+          echo "APP_NAME=${GITHUB_REPOSITORY##*/}"
+          echo "RELEASE_TOKEN is ${#RELEASE_TOKEN} characters long"
+          if [ -z "$RELEASE_TOKEN" ]; then
+            echo "❌ RELEASE_TOKEN is missing"
+            exit 1
+          else
+            echo "✅ RELEASE_TOKEN is present"
+          fi
+      -
         name: Register with releases repo
         shell: bash
         run: |
