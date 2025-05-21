@@ -37,6 +37,7 @@ jobs:
           push: true
           tags: doclosjs/${{values.app_name}}:${{ '${{env.COMMIT_ID}}' }}
   cd:
+    needs: ci
     runs-on: ubuntu-latest
     env:
       RELEASE_TOKEN: ${{secrets.RELEASE_TOKEN }}
