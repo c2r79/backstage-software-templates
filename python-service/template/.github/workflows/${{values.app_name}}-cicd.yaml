@@ -38,14 +38,14 @@ jobs:
           push: true
           tags: doclosjs/${{values.app_name}}:${{ '${{env.COMMIT_ID}}' }}
       -
-        name: Debug GitHub token presence
+        name: Debug Release token presence
         shell: bash
         run: |
-          if [ -z "$GITHUB_TOKEN" ]; then
-            echo "GITHUB_TOKEN is empty"
+          if [ -z "$RELEASE_TOKEN" ]; then
+            echo "RELEASE_TOKEN is empty"
             exit 1
           else
-            echo "GITHUB_TOKEN is set"
+            echo "RELEASE_TOKEN is set"
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
@@ -53,11 +53,11 @@ jobs:
         name: Register with releases
         shell: bash
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
           APP_NAME: ${{ values.app_name }}
           APP_ENV: ${{ values.app_env }}
         run: |
-          export RELEASE_REPO="https://x-access-token:${GITHUB_TOKEN}@github.com/los-demos/dcipher-demo-releases.git" 
+          export RELEASE_REPO="https://x-access-token:${RELEASE_TOKEN}@github.com/los-demos/dcipher-demo-releases.git" 
           ./post-create.sh
   #   outputs:
   #     commit_id: ${{ '${{env.COMMIT_ID}}' }}
