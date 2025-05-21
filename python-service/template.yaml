@@ -39,8 +39,6 @@ spec:
       action: fetch:template
       input:
         url: ./template
-        # url: https://github.com/los-demos/backstage-software-templates/tree/main/python-service
-        # targetPath: '.'
         values:
           app_name: ${{parameters.component_id}}
           app_env: ${{parameters.environment}}
@@ -57,7 +55,7 @@ spec:
         protectDefaultBranch: true
         repoVisibility: public
         defaultBranch: main
-        useAppAuth: true
+        useAppAuth: false
 
     - id: register
       name: Register new repo with Backstage
