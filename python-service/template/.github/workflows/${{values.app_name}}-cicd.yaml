@@ -53,7 +53,7 @@ jobs:
         name: Register with releases
         shell: bash
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
           APP_NAME: ${{ values.app_name }}
           APP_ENV: ${{ values.app_env }}
         run: |
