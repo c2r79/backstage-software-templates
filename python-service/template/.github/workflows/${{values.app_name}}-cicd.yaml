@@ -40,19 +40,33 @@ jobs:
     needs: ci
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - 
+        name: Checkout repository
         uses: actions/checkout@v3
-
-      - name: Set environment variables
-        run: |
-          echo "APP_NAME=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
-          echo "APP_ENV=${{values.app_env}}" >> $GITHUB_ENV  # or infer from branch or input
-
-      - name: Register with releases repo
+      -
+        name: Register with releases repo
         shell: bash
         run: |
-          export RELEASE_REPO="https://x-access-token:${{ secrets.RELEASE_TOKEN }}@github.com/los-demos/dcipher-demo-releases.git" 
+          export APP_NAME="${GITHUB_REPOSITORY##*/}"
+          export APP_ENV="${{values.app_name}}"  # or derive dynamically if needed
+          export RELEASE_REPO="https://x-access-token:${{ secrets.RELEASE_TOKEN }}@github.com/los-demos/dcipher-demo-releases.git"
+
+          echo "APP_NAME=$APP_NAME"
+          echo "APP_ENV=$APP_ENV"
+          echo "RELEASE_REPO=$RELEASE_REPO"
+
           ./post-create.sh
+
+      # - name: Set environment variables
+      #   run: |
+      #     echo "APP_NAME=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
+      #     echo "APP_ENV=${{values.app_env}}" >> $GITHUB_ENV  # or infer from branch or input
+
+      # - name: Register with releases repo
+      #   shell: bash
+      #   run: |
+      #     export RELEASE_REPO="https://x-access-token:${{ secrets.RELEASE_TOKEN }}@github.com/los-demos/dcipher-demo-releases.git" 
+      #     ./post-create.sh
 
   # cd:
   #   needs: ci
