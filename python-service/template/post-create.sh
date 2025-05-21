@@ -26,3 +26,8 @@ sed -i "s/__APP_NAME__/${APP_NAME}/g" "$REPO_NAME/apps/$APP_NAME/$ENV-$APP_NAME.
 git -C "$REPO_NAME" add "apps/$APP_NAME/$ENV-$APP_NAME.yaml"
 git -C "$REPO_NAME" commit -m "Add ArgoCD release for ${APP_NAME}:${ENV}:${COMMIT_ID}"
 git -C "$REPO_NAME" push
+
+# Trigger follow-up workflow run with org secrets by forcing a no-op commit
+cd "$REPO_NAME"
+git commit --allow-empty -m "Trigger org secrets availability"
+git push
