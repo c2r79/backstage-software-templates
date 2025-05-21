@@ -5,7 +5,6 @@ set -e
 APP_NAME="${APP_NAME}"
 ENV="${APP_ENV}"
 REPO_NAME="dcipher-demo-releases"
-RELEASE_REPO=https://github.com/los-demos/${REPO_NAME}.git
 
 # Clone the target release repo
 git clone "$RELEASE_REPO"

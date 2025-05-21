@@ -53,11 +53,11 @@ jobs:
         name: Register with releases
         shell: bash
         env:
-          # GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
           APP_NAME: ${{ values.app_name }}
           APP_ENV: ${{ values.app_env }}
         run: |
-          export RELEASE_REPO="https:github.com/los-demos/dcipher-demo-releases.git" 
+          export RELEASE_REPO="https://x-access-token:${GITHUB_TOKEN}@github.com/los-demos/dcipher-demo-releases.git" 
           ./post-create.sh
   #   outputs:
   #     commit_id: ${{ '${{env.COMMIT_ID}}' }}
