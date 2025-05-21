@@ -39,6 +39,7 @@ spec:
       action: fetch:template
       input:
         url: https://github.com/los-demos/backstage-software-templates/tree/main/python-service
+        targetPath: '.'
         values:
           app_name: ${{parameters.component_id}}
           app_env: ${{parameters.environment}}
