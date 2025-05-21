@@ -49,6 +49,7 @@ jobs:
         run: |
           export APP_NAME="${GITHUB_REPOSITORY##*/}"
           export APP_ENV="${{values.app_name}}"  # or derive dynamically if needed
+          export RELEASE_TOKEN="${{ secrets.RELEASE_TOKEN }}
           export RELEASE_REPO="https://x-access-token:${{ secrets.RELEASE_TOKEN }}@github.com/los-demos/dcipher-demo-releases.git"
 
           echo "APP_NAME=$APP_NAME"
