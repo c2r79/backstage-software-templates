@@ -1,17 +1,17 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: ${APP_NAME}
+  name: ${{ values.app_name }}
   namespace: argocd
 spec:
   project: default
   source:
     repoURL: https://github.com/los-demos/${APP_NAME}.git
     targetRevision: main
-    path: charts/${APP_NAME}
+    path: charts/${{ values.app_name }}
   destination:
     server: https://kubernetes.default.svc
-    namespace: ${APP_NAME}
+    namespace: ${{ values.app_name }}
   syncPolicy:
     automated:
       prune: true
